@@ -10,6 +10,7 @@
 !/compilers/binaryCompiler.py
 !/compilers/parallelCompiler.py
 !/compilers/makefile.py
+!/data/*
 !/assets
 !/assets/*
 !.gitignore
@@ -28,14 +29,14 @@
 !program.py
 !parse_nas_runtime.py
 !/compar_app
+/compar_app/*
 !/compar_app/templates
-!/compar_app/codemirror
-!/compar_app/codemirror/**
-!/compar_app/static
-!/compar_app/static/**
+!/compar_app/templates/home.html
+!/compar_app/templates/index.html
 !/compar_app/app.py
-!/compar_app/templates/single-file-mode.html
-!/compar_app/templates/multiple-files-mode.html
-!/compar_app/templates/makefile-mode.html
+!/compar_app/templates/base.html
+!/compar_app/templates/output.html
+!/compar_app/templates/result.html
+!/compar_app/output.py
 !subprocess_handler.py
 
