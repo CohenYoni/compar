@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% import "bootstrap/wtf.html" as wtf %}
+
 <html lang="en">
 <head>
     <title>Compar</title>
@@ -217,17 +218,16 @@
         // last line didn't end in a newline char
         yield chunk.substr(startIndex);
       }
-  }
+}
 
-    async function run() {
-      for await (let line of makeTextFileLineIterator("stream_progress")) {
+async function run() {
+  for await (let line of makeTextFileLineIterator("stream_progress")) {
                 var item = document.createElement('li');
-                item.textContent = line;
+            item.textContent = line;
                 output.appendChild(item);
-      }
-    // call here to show result file
-    }
+  }
+// call here to show result file
+}
 
-    run();
+run();
 </script>
-</html>
