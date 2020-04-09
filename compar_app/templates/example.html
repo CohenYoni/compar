@@ -632,9 +632,9 @@
 
 async function run() {
   for await (let line of makeTextFileLineIterator("stream_progress")) {
-            var item = document.createElement('li');
+                var item = document.createElement('li');
             item.textContent = line;
-            output.appendChild(item);
+                output.appendChild(item);
   }
 // call here to show result file
 }
