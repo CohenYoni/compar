@@ -191,12 +191,10 @@ def main_page():
 @app.route('/stream_progress')
 def stream():
     def generate():
-        print("GGGGGGGGGGGGGGGGGGGGGG")
         global output_log
-        proc = subprocess.Popen(['python3 -u test.py'], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        proc = subprocess.Popen(['python3 -u testt.py'], shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         for line in proc.stdout:
             output_log += str(line) + "\n"
-            print(line)
             yield line.rstrip() + b'\n'
         sleep(5)
 
