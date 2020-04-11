@@ -263,7 +263,7 @@ class Compar:
             job = self.execute_job(job, self.serial_run_time)
         except Exception as ex:
             self.save_combination_as_failure(Combination.FINAL_COMBINATION_ID, str(ex) +
-            self.save_combination_as_failure(Combination.FINAL_COMBINATION_ID, msg, compar_combination_folder_path)
+            self.save_combination_as_failure(Combination.COMPAR_COMBINATION_ID, msg, compar_combination_folder_path)
         # Check for best total runtime
         best_runtime_combination_id = self.db.get_total_runtime_best_combination()
         if best_runtime_combination_id != Combination.COMPAR_COMBINATION_ID:
