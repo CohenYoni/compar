@@ -6,18 +6,21 @@ from flask_bootstrap import Bootstrap
 import subprocess
 from flask import request
 from flask import Flask, render_template
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 
-UPLOAD_FOLDER = 'C:\\Users\\Yoel\\Desktop\\COMMMM\\'
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'py', 'c', 'cpp'}
+
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+WTF_CSRF_ENABLED = False
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 Bootstrap(app)
 
 DATA = {}
+SOURCE_FILE_DIRECTORY = ''
+
+
 output_log = ""
 
 class singleFileForm(FlaskForm):
@@ -26,37 +29,47 @@ class singleFileForm(FlaskForm):
     compiler = SelectField('compiler', choices=[('icc', 'ICC'), ('gcc', 'GCC')])
     compiler_version = StringField('compiler_version')
     compiler_flags = TextAreaField('compiler_flags')
+    source_file_area = TextAreaField('source_file_area')
+    upload_file = FileField('upload_file', validators=[FileAllowed(['c'], 'c file only!')])#valiation dont work
 
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def save_source_file(file_path, txt):
+    # This function replace the save file option because Changes that can be in the code
+    with open(file_path, "w") as f:
+        f.write(txt)
+
+
+
 
 @app.route("/")
 @app.route("/singlefile", methods=['GET', 'POST'])
 def single_file():
     source_file = ''
-    form = singleFileForm(request.form)
-
+    form = singleFileForm()
     if request.method == "POST":
-        if request.form.get('upload_button'):
-            file = request.files.get('file')
-            if file and allowed_file(file.filename):
-                print("kjjjjjjjjjjjjjjjj")
-                print(request.form.get('upload_button'))
-                file.save(file.filename)
-                with open(file.filename, "r") as f:
-                    source_file = f.read()
+        if request.form.get('start_button'):
+            #TODO - Open Compar object
+            DATA['slurm_parameters'] = form.slurm_parameters.data
+            DATA['save_combinations'] = form.save_combinations.data
+            DATA['compiler'] = form.compiler.data
+            DATA['compiler_version'] = form.compiler_version.data
+            DATA['compiler_flags'] = form.compiler_flags.data
+            DATA['source_file_text'] = form.source_file_area.data
 
-
-            return render_template('single-file-mode.html', form=form, source_file=source_file)
-
-        elif request.form.get('start_button'):
-            print("blabla",form.slurm_parameters.data, form.save_combinations.data, form.compiler.data, form.compiler_version.data, form.compiler_flags.data)
-            return render_template('single-file-mode.html', form=form, source_file=source_file)
+            if form.source_file_area.data:
+                file = form.upload_file.data
+                if file:
+                    DATA['source_file_name'] = file.filename
+                    DATA['source_file_path'] = os.path.join(SOURCE_FILE_DIRECTORY, file.filename)
+                else:
+                    DATA['source_file_name'] = 'source_file.c'
+                    DATA['source_file_path'] = os.path.join(SOURCE_FILE_DIRECTORY, 'source_file.c')
+                save_source_file(file_path=DATA['source_file_path'], txt=form.source_file_area.data)
 
     print(form.slurm_parameters.errors)
-    return render_template('single-file-mode.html', form=form, source_file=source_file)
+    return render_template('single-file-mode.html', form=form)
 
 
 @app.route('/upload_file')
