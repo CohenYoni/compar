@@ -151,7 +151,7 @@
                         <input  style="margin-left:30px" type="checkbox" id="combination-folders-no" value="yes">
                     </div>
                     </div>
-                    <button type="submit" value="Submit" class="startbtn">START</button>
+                    <button type="submit" value="Submit" class="startbtn" name="start_button">START</button>
                 </form>
             </div>
             <div class="screen-container">
@@ -159,7 +159,12 @@
                     <div class="flex-col">
                         <div class="flex-row-spaced title">
                             <div>Source File</div>
-                            <button>Upload</button>
+                            <form method="POST" action="/singlefile" enctype=multipart/form-data >
+                                <input type=file name=file>
+                                <button type=submit value="Submit" name="upload_button">Upload</button>
+                            </form>
+
+
                         </div>
                         <div class="textarea-cover">
                             <textarea id="editor1">{{source_file}}</textarea>
