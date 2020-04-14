@@ -3,7 +3,7 @@ import sys
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField,BooleanField,SelectField
-from wtforms.validators import InputRequired
+from wtforms.validators import InputRequired, ValidationError
 from flask_bootstrap import Bootstrap
 import subprocess
 from flask import request
@@ -19,12 +19,16 @@ Bootstrap(app)
 DATA = {}
 output_log = ""
 
+def check_length(form, field):
+    if len(field.data) < 1:
+        raise ValidationError('Compiler version is required')
+
 
 class singleFileForm(FlaskForm):
     slurm_parameters = TextAreaField('slurm_parameters', validators=[InputRequired()])
     save_combinations = BooleanField('save_combinations')
     compiler = SelectField('compiler', choices=[('icc', 'ICC'), ('gcc','GCC')])
-    compiler_version = StringField('compiler_version')
+    compiler_version = StringField('compiler_version', validators=[check_length])
     compiler_flags = TextAreaField('compiler_flags')
 
 
@@ -34,7 +38,6 @@ def single_file():
     form = singleFileForm(request.form)
 
     if request.method == "POST" and form.validate_on_submit():
-        print("blabla",form.slurm_parameters.data, form.save_combinations.data, form.compiler.data, form.compiler_version.data, form.compiler_flags.data)
         return render_template('single-file-mode.html', form=form)
     print(form.slurm_parameters.errors)
     return render_template('single-file-mode.html', form=form)

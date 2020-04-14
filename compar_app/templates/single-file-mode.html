@@ -119,11 +119,10 @@
                          <button type="button" onclick="addParameter('slurm-params','parameters')" class="mybutton positive">+</button>
                          <button type="button" onclick="removeParameter('parameters')" class="mybutton negative">-</button>
                     </div>
+                    {{ form.slurm_parameters(id="parameters", readonly=true) }}
                     {% for error in form.slurm_parameters.errors %}
                         <div style="color: red;">{{ error }}</div>
                     {% endfor %}
-                    {{ form.slurm_parameters(id="parameters", readonly=true) }}
-
                     <div class="horizontal-separator"></div>
                     <div style="align-items: center" class="flex-row">
                         <div class="form-title">Save combination folders:</div>
@@ -137,6 +136,9 @@
                     <div class="horizontal-separator"></div>
                     <div class="form-title">Compiler version:</div>
                     {{ form.compiler_version }}
+                    {% for error in form.compiler_version.errors %}
+                        <div style="color: red;">{{ error }}</div>
+                    {% endfor %}
                     <div class="horizontal-separator"></div>
                     <div class="form-title">Compiler flags:</div>
                     <div style="align-items: center" class="flex-row">
