@@ -49,7 +49,9 @@
 !combination_validator.py
 !tests
 !tests/test_job.py
-!/tests
-!/tests/test_timer.py
+!tests
+!tests/test_job.py
+!tests/test_gcc.py
+!tests/test_compiler.py
 !tests/test_gcc.py
 !tests/test_compiler.py
