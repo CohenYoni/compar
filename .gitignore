@@ -47,4 +47,5 @@
 !combinator.py
 !globals.py
 !combination_validator.py
-!/tests/*
+!/tests
+!/tests/test_timer.py
