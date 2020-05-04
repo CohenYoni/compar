@@ -1,6 +1,5 @@
 from unittest import TestCase
 from combination import Combination
-from parameters import Parameters
 
 
 class TestCodels(TestCase):
