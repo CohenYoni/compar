@@ -21,15 +21,15 @@ class TestCodels(TestCase):
         self.assertEqual(result,  self.test_directive_params)
 
     def test_generate_directive_list_from_json(self):
-        with open(OMP_DIRECTIVES_FILE_PATH, 'r') as fp:
+        with open(CombinatorConfig.OMP_DIRECTIVES_FILE_PATH, 'r') as fp:
             json_omp_directives = json.load(fp)
         params = json_omp_directives['for']
-        pragma_type = FOR_DIRECTIVE_PREFIX
+        pragma_type = CombinatorConfig.FOR_DIRECTIVE_PREFIX
         result = generate_directive_list_from_json(params, pragma_type)
         self.assertEqual(result,  [self.test_directive_params])
 
     def test_generate_toggle_params_list(self):
-        with open(COMPILATION_PARAMS_FILE_PATH, 'r') as fp:
+        with open(CombinatorConfig.COMPILATION_PARAMS_FILE_PATH, 'r') as fp:
             compilation_flags_array = json.load(fp)
         comb = compilation_flags_array[0]
         compiler = comb["compiler"]
@@ -37,7 +37,7 @@ class TestCodels(TestCase):
         self.assertEqual(result,  [])
 
     def test_generate_valued_params(self):
-        with open(COMPILATION_PARAMS_FILE_PATH, 'r') as fp:
+        with open(CombinatorConfig.COMPILATION_PARAMS_FILE_PATH, 'r') as fp:
             compilation_flags_array = json.load(fp)
         comb = compilation_flags_array[0]
         compiler = comb["compiler"]
@@ -46,7 +46,7 @@ class TestCodels(TestCase):
 
     def test_generate_omp_rtl_params(self):
         result = []
-        with open(OMP_RTL_PARAMS_FILE_PATH, 'r') as fp:
+        with open(CombinatorConfig.OMP_RTL_PARAMS_FILE_PATH, 'r') as fp:
             omp_rtl_array = json.load(fp)
         for param in omp_rtl_array:
             result.append(generate_omp_rtl_params(param))
@@ -57,7 +57,7 @@ class TestCodels(TestCase):
                 'omp_set_num_threads(16);', 'omp_set_num_threads(32);']
 
         omp_rtl_params = []
-        with open(OMP_RTL_PARAMS_FILE_PATH, 'r') as fp:
+        with open(CombinatorConfig.OMP_RTL_PARAMS_FILE_PATH, 'r') as fp:
             omp_rtl_array = json.load(fp)
         for param in omp_rtl_array:
             omp_rtl_params.append(generate_omp_rtl_params(param))
