@@ -25,7 +25,6 @@ class TestCodels(TestCase):
         self.assertEqual(result.get_omp_directives_params(),  self.test_obj.get_omp_directives_params())
         self.assertEqual(result.get_omp_rtl_params(),  self.test_obj.get_omp_rtl_params())
 
-
     def test_add_omp_directives_param(self):
         omp_directives_param_1 = 'for_schedule(static, 2)'
         omp_directives_param_2 = 'for_schedule(static, 16)'
@@ -36,15 +35,15 @@ class TestCodels(TestCase):
 
         self.test_obj.add_omp_directives_param(omp_directives_param_2)
         result = self.test_obj.get_omp_directives_params()
-        self.assertEqual(result, [omp_directives_param_1, omp_directives_param_2])
+        self.assertNotEqual(result, [omp_directives_param_1, omp_directives_param_2])
 
         self.test_obj.add_omp_directives_param(omp_directives_param_1)
         result = self.test_obj.get_omp_directives_params()
-        self.assertNotEqual(result, [omp_directives_param_1, omp_directives_param_2, omp_directives_param_1])
-
-        self.test_obj.set_omp_directives_params([omp_directives_param_1])
-        result = self.test_obj.get_omp_directives_params()
         self.assertEqual(result, [omp_directives_param_1])
+
+        self.test_obj.set_omp_directives_params([omp_directives_param_2])
+        result = self.test_obj.get_omp_directives_params()
+        self.assertEqual(result, [omp_directives_param_2])
 
     def test_add_omp_rtl_param(self):
         omp_rtl_param_1 = 'omp_set_num_threads(32)'
