@@ -2,7 +2,7 @@ from unittest import TestCase
 from parameters import Parameters
 
 
-class TestCodels(TestCase):
+class TestClassParameters(TestCase):
 
     def setUp(self):
         self.test_obj = Parameters()
