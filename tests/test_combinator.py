@@ -2,7 +2,7 @@ from unittest import TestCase
 from combinator import *
 
 
-class TestCodels(TestCase):
+class TestCassCombinator(TestCase):
 
     def setUp(self):
         self.test_directive_params = ['for_schedule(static, 2)', 'for_schedule(static, 4)', 'for_schedule(static, 8)',
