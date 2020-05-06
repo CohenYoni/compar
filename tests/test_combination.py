@@ -2,7 +2,7 @@ from unittest import TestCase
 from combination import Combination
 
 
-class TestCodels(TestCase):
+class TestClassCombination(TestCase):
 
     def setUp(self):
         self.test_obj = Combination('1', 'test', None)
