@@ -3,6 +3,7 @@ import shutil
 from unittest import TestCase
 from combination import Combination
 from compilers.parallelCompiler import ParallelCompiler
+from exceptions import CompilationError
 
 
 class TestClassParallelCompiler(TestCase):
@@ -37,3 +38,6 @@ class TestClassParallelCompiler(TestCase):
     def test_set_file_list(self):
         self.test_obj.set_file_list(['test1.c', 'test2.c'])
         self.assertEqual(self.test_obj.get_file_list(),  ['test1.c', 'test2.c'])
+
+    def test_compile(self):
+        self.assertRaises(CompilationError, self.test_obj.compile)
