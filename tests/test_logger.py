@@ -3,7 +3,7 @@ from logger import *
 import io
 import sys
 
-class TestCodels(TestCase):
+class TestClassLogger(TestCase):
     NO_OUTPUT = 0
     BASIC = 1
     VERBOSE = 2
