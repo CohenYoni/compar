@@ -49,3 +49,11 @@
 !combination_validator.py
 !/tests
 !/tests/test_timer.py
+!/tests/test_parameters.py
+!/tests/test_logger.py
+!/tests/test_combinator.py
+!/tests/test_combination.py
+!/tests/test_cetus.py
+!/tests/test_makefile.py
+!/tests/test_parallelCompiler.py
+!/tests/test_database.py

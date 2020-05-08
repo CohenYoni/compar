@@ -17,10 +17,26 @@ function Upload_file(fileId, textAreaId) {
          }
     }
 
-function downloadFile(){
+async function downloadFile(){
     var codeMirrorResultEditor = $('.CodeMirror')[1].CodeMirror;
     resultCode = codeMirrorResultEditor.getValue();
-    if (resultCode && !comparIsRunning){
+
+    var comparStatusCode = 0;
+    var url = "/checkComparStatus"
+      await  fetch(url)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+          if(data['success'] === 1){
+             comparStatusCode = 1;
+          }
+          else if(data['success'] === 0){
+            comparStatusCode = 0;
+          }
+       });
+
+    if (resultCode && comparStatusCode && !comparIsRunning){
         var anchor=document.createElement('a');
         anchor.setAttribute('href',"/downloadResultFile");
         anchor.setAttribute('download','');
