@@ -7,6 +7,7 @@ class TestClassTimer(unittest.TestCase):
     def setUp(self):
         self.file_name = "test_file.c"
         self.c_code = "void main() {\nint x = 3;\nfor(int i = 0; i < 1000; i++){\nx++;\n}\n}"
+        self.test_loop_dict = {self.file_name: [1, 'loop_array']}
 
         self.test_file = open(self.file_name, 'w')
         self.test_file.write(self.c_code)
@@ -21,11 +22,6 @@ class TestClassTimer(unittest.TestCase):
     def test_get_file_name_prefix_token(self):
         prefix_output_file = '#)$-@,(&=!+%^____,(&=__compar__@__should_+__be_+%___unique_(&!+$-=!+@%=!'
         self.assertEqual(Timer.get_file_name_prefix_token(), prefix_output_file)
-
-    def test_calculate_num_of_loops(self):
-        pass
-        # file_text_to_check, fragments = self.timer_mock.calculate_num_of_loops()
-        # self.assertEqual(1, len(fragments))
 
     def test_inject_declarations_to_main_file(self):
         declarations_for_test = "This is a test!!"
@@ -45,6 +41,19 @@ class TestClassTimer(unittest.TestCase):
         expected_code += f"{Timer.COMPAR_VAR_PREFIX}struct extern {name_of_global_array_for_test}[1];\n"
         expected_code += file_text
         self.assertEqual(new_code, expected_code)
+
+    def test_generate_at_exit_function_code(self):
+        expected_sub_code = f'if ({self.test_loop_dict[self.file_name][1]}[0].counter > 0) '
+        expected_sub_code += Timer.WRITE_TO_FILE_CODE_2.format(self.test_loop_dict[self.file_name][1], 0+1,
+                                                               f'{self.test_loop_dict[self.file_name][1]}'
+                                                               f'[0].total_runtime')
+        code = Timer.generate_at_exit_function_code(self.test_loop_dict, '')
+        self.assertIsNotNone(code)
+        self.assertTrue(expected_sub_code in code)
+
+    def test_inject_atexit_code_to_main_file(self):
+        code = Timer.inject_atexit_code_to_main_file(self.file_name, self.test_loop_dict, '')
+        self.assertIsNone(code)
 
 
 if __name__ == '__main__':
