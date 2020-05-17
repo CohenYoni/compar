@@ -84,7 +84,7 @@ class ExceptionConfig:
 
 
 class ExecuteJobConfig:
-    CHECK_SQUEUE_SECOND_TIME = 30
+    CHECK_SQUEUE_SECOND_TIME = 10
     TRY_SLURM_RECOVERY_AGAIN_SECOND_TIME = 300
     SERIAL_SPEEDUP = 1.0
 
@@ -97,7 +97,8 @@ class FileFormatorConfig:
         'AllowShortIfStatementsOnASingleLine: false',
         'AllowShortBlocksOnASingleLine: false',
         'AllowShortFunctionsOnASingleLine: false',
-        'AllowShortLoopsOnASingleLine: false'
+        'AllowShortLoopsOnASingleLine: false',
+        'SortIncludes: false'
     ]
     COLUMN_LIMIT_STYLE_ARGUMENT = 'ColumnLimit: 0'
 

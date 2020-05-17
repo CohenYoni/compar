@@ -1,0 +1,14 @@
+[
+  {
+    "compiler": "dummy",
+    "essential_params": {
+      "valued": [],
+      "toggle": []
+    },
+    "optional_params": {
+      "valued": [],
+      "toggle": []
+    }
+  }
+]
+
