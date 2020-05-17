@@ -1,4 +1,8 @@
 var comparIsRunning = false;
+var totalCombinationsToRun = 0;
+var ranCombination = 0;
+var speedup = 0;
+var slurmJobs = new Set();
 
 async function* makeTextFileLineIterator(fileURL) {
   const utf8Decoder = new TextDecoder('utf-8');
@@ -42,10 +46,22 @@ async function run() {
   if (!comparIsRunning){
       output.innerHTML = "";
       comparIsRunning = true;
+      totalCombinationsToRun = 0;
+      ranCombination = 0;
+      speedup = 0;
+      slurmJobs = new Set();
       document.getElementById("outputFolder").innerHTML = "Compar in progress ...";
       startComparButton.disabled = true;
+      progress_bar = document.getElementById("progress_bar");
+      progress_bar.style.display = 'flex';
+      speedup = document.getElementById("speed_up");
+      speedup.style.display = 'none';
+      run_progress = document.getElementById("run_progress");
+      run_progress.style.height = "100%";
+      resetProgressBar();
 
       for await (let line of makeTextFileLineIterator("stream_progress")) {
+                parseLine(line);
                 var item = document.createElement('li');
                 item.textContent = line;
                 output.appendChild(item);
@@ -103,7 +119,6 @@ async function run() {
 
           }
       });
-
       comparIsRunning = false;
       startComparButton.disabled = false;
   }

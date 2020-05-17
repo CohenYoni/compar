@@ -2,7 +2,7 @@
 {% import "bootstrap/wtf.html" as wtf %}
 <html lang="en">
 <head>
-    <title>Compar</title>
+    <title>ComPar</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="{{ url_for('static', filename='js/codemirror.js')}}"></script>
@@ -15,14 +15,17 @@
     <link href="{{ url_for('static', filename='css/styles.css')}}" rel="stylesheet" />
     <script src="{{ url_for('static', filename='js/jquery-3.4.1.min.js')}}"></script>
     <script src="{{ url_for('static', filename='js/common/advanced_options.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/common/menu_bar.js')}}"></script>
     <script src="{{ url_for('static', filename='js/single_file_mode/on_load.js')}}"></script>
     <script src="{{ url_for('static', filename='js/single_file_mode/dynamic_parameters.js')}}"></script>
     <script src="{{ url_for('static', filename='js/single_file_mode/form_and_errors.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/common/common.js')}}"></script>
 </head>
 
 <body onLoad="init()">
     <nav>
-        <div class="navtitle">Compar</div>
+        <div class="navtitle">ComPar</div>
+        <img style="border-radius: 50%; margin-left: 5px" src="{{ url_for('static', filename='assets/compar.jpeg')}}" alt="/" height="35" width="35"/>
         <div class="separator"></div>
         <a href="/singlefile" id="singlemod" class="ref">Single File Mode</a>
         <a href="/multiplefiles" class="seperate ref">Multiple Files Mode</a>
@@ -35,7 +38,7 @@
         <div class="page-layout">
             <div class="mycontainer">
                 <div class="form-container form">
-                    <div class="title">Compar Parameters</div>
+                    <div class="title">ComPar Parameters</div>
                     <div class="form-area">
                         {{ form.csrf_token }}
                         <div style="align-items: center" class="flex-row">
@@ -45,42 +48,80 @@
                         <div class="horizontal-separator"></div>
                         <div class="advanced" onclick="showAdvancedOptions()">Advanced options >></div>
                         <div id="advanced">
-                            <div class="form-title">Binary compiler flags:</div>
+                            <div class="flex-row-spaced">
+                                <div class="form-title">Binary compiler flags:</div>
+                                <div class="tooltip informationButton">i
+                                    <span class="tooltiptext">Flags that are passed to the binary compiler (e.g. -c -o)</span>
+                                </div>
+                            </div>
                             <div style="align-items: center" class="flex-row">
                                 <input type="text" id="compiler-flags"/>
                                 <button type="button" onclick="addItem('binaryCompilerFlags','compiler-flags', 'compiler-flags-list')" class="mybutton positive">+</button>
                             </div>
                             <div id="compiler-flags-list"></div>
                             <div class="horizontal-separator"></div>
-                            <div class="form-title">Binary compiler version:</div>
-                                <div style="color: red;" id="compilerVersionAlert"></div>
+                            <div class="flex-row-spaced">
+                                <div class="form-title">Binary compiler version:</div>
+                                <div class="tooltip informationButton">i
+                                    <span class="tooltiptext">GCC/ICC version (e.g. 10.1)</span>
+                                </div>
+                            </div>
                             {{ form.compiler_version }}
                             <div class="horizontal-separator"></div>
-                            <div class="form-title">Slurm partition:</div>
+                            <div class="flex-row-spaced">
+                                <div class="form-title">Slurm partition:</div>
+                                <div class="tooltip informationButton">i
+                                    <span class="tooltiptext">Slurm partition (e.g. grid)</span>
+                                </div>
+                            </div>
                             {{ form.slurm_partition(id="slurm_part") }}
                             <div style="color: red;" id="slurmPartitionAlert"></div>
                             <div class="horizontal-separator"></div>
-                            <div style="align-items: center" class="flex-row">
-                                <div class="form-title">Save combination folders:</div>
-                                {{ form.save_combinations(style='margin-left: 30px')}}
+                            <div class="flex-row-spaced">
+                                <div style="align-items: center" class="flex-row">
+                                    <div class="form-title">Save combinations folders:</div>
+                                    {{ form.save_combinations(style='margin-left: 20px')}}
+                                 </div>
+                                <div class="tooltip informationButton">i
+                                    <span class="tooltiptext">Mark as "Yes" if you want to preserve all combinations folders</span>
+                                </div>
                             </div>
                             <div class="horizontal-separator"></div>
-                             <div style="align-items: center" class="flex-row">
-                                <div class="form-title">Clear database data:</div>
-                                {{ form.clear_database(checked=True, style='margin-left: 30px')}}
+                            <div class="flex-row-spaced">
+                                <div class="form-title">Multiply combinations:</div>
+                                <div class="tooltip informationButton">i
+                                    <span class="tooltiptext">Each combination will run multiple times and their average runtime will be calculated</span>
+                                </div>
+                            </div>
+                            {{ form.multiple_combinations }}
+                            <div style="color: red;" id="multipleCombinationsAlert"></div>
+                            <div class="horizontal-separator"></div>
+                            <div class="flex-row-spaced">
+                                <div style="align-items: center" class="flex-row">
+                                    <div class="form-title">Clear database data:</div>
+                                    {{ form.clear_database(checked=True, style='margin-left: 30px')}}
+                                </div>
+                                <div class="tooltip informationButton">i
+                                    <span class="tooltiptext">Mark as "Yes" if you want to clear the database after ComPar ends</span>
+                                </div>
                             </div>
                             <div class="horizontal-separator"></div>
                             <div class="flex-row" style="align-items: center;">
                                  <div style="align-items: center" class="flex-row">
-                                    <div class="form-title">Using Compar output:</div>
+                                    <div class="form-title">Using ComPar output:</div>
                                     {{ form.with_markers(style='margin-left: 30px')}}
                                 </div>
                                 <div class="tooltip informationButton">i
-                                    <span class="tooltiptext">Mark as "Yes" when the source code is a product of Compar</span>
+                                    <span class="tooltiptext">Mark as "Yes" when the source code is a product of ComPar</span>
                                 </div>
                             </div>
                             <div class="horizontal-separator"></div>
-                            <div class="form-title">Slurm parameters:</div>
+                            <div class="flex-row-spaced">
+                                <div class="form-title">Slurm parameters:</div>
+                                <div class="tooltip informationButton">i
+                                    <span class="tooltiptext">Flags that are passed to the slurm (e.g. --begin=16:00)</span>
+                                </div>
+                            </div>
                             <div class="flex-row-centered">
                              <input type="text" id="slurm-params"/>
                              <button type="button" onclick="addItem('slurmParametersList','slurm-params', 'slurm-parameters-list')" class="mybutton positive">+</button>
@@ -125,23 +166,33 @@
 
                             </div>
                             <div class="horizontal-separator"></div>
-                            <div class="form-title">Main file parameters:</div>
+                            <div class="flex-row-spaced">
+                                <div class="form-title">Main file parameters:</div>
+                                <div class="tooltip informationButton">i
+                                    <span class="tooltiptext">Parameters that will be passed to the main file before run</span>
+                                </div>
+                            </div>
                             <div class="flex-row-centered">
                              <input type="text" id="main-file-params"/>
                              <button type="button" onclick="addItem('mainFileParamList','main-file-params','main-params-list')" class="mybutton positive">+</button>
                             </div>
                             <div id="main-params-list"></div>
                             <div class="horizontal-separator"></div>
-                            <div style="align-items: center" class="flex-row">
-                            <div class="form-title">Log level:</div>
-                            {{ form.log_level(style='margin-left: 30px') }}
+                            <div class="flex-row-spaced">
+                                <div style="align-items: center" class="flex-row">
+                                    <div class="form-title">Log level:</div>
+                                    {{ form.log_level(style='margin-left: 30px') }}
+                                </div>
+                                <div class="tooltip informationButton">i
+                                    <span class="tooltiptext">Log information level to be displayed on the output log</span>
+                                </div>
                             </div>
                             <div class="horizontal-separator"></div>
                             <div class="flex-row-spaced">
-                                <div class="form-title">Compar mode:</div>
+                                <div class="form-title">ComPar mode:</div>
                                 {{ form.compar_mode(style='margin-left: 30px') }}
                                 <div class="tooltip informationButton">i
-                                    <span class="tooltiptext">Override - remove any existing data. New - create a new project if it exists. Continue - in case that project exist, continue from last point.</span>
+                                    <span class="tooltiptext">Override - remove any existing data. New - create a new project if one already exists. Continue - in case that project exist, continue from last point.</span>
                                 </div>
                             </div>
                             <div class="horizontal-separator"></div>
@@ -175,15 +226,51 @@
                         <div style="margin-left: 20px; direction: rtl; overflow: auto;" class="flex-col resizable">
                             <div style="direction: ltr" class="flex-row-spaced title">
                                 <div>Result File</div>
-                                <button class="files_button" onclick="downloadFile()" id="download_button" type="button">Download</button>
+                                <button class="files_button" onclick="downloadFile('downloadResultFile')" id="download_button" type="button">Download</button>
                             </div>
                             {{ form.result_file_area(id="result_editor") }}
                         </div>
                     </div>
-                    <div class="output-log flex-col">
-                        <div class="title">Output Log</div>
-                        <div class="out">
-                            <div id="output"></div>
+                    <div style="height: 50%; margin-top: 8px; overflow: hidden" class="flex-col">
+                        <div class="output-log flex-col">
+                            <div style="padding: 6.5px" class="flex-row-spaced title">
+                                <div>Log</div>
+                                <div class="menu" onclick="showMenuBar()">
+                                    <div style="width: auto" class="burger">
+                                        <div class="menu-icon"></div>
+                                        <div class="menu-icon"></div>
+                                        <div class="menu-icon"></div>
+                                    </div>
+                                    <div class="menu-context" id="menu">
+                                        <div onclick="downloadFile('downloadLogFile')" class="context">Download log file</div>
+                                        <div style="background: black; margin: 0px" class="horizontal-separator"></div>
+                                        <div onclick="downloadFile('downloadSummaryFile')" class="context">Download summary file</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="out">
+                                <div id="output"></div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 8px; height: 40%;" class="output-log flex-col">
+                            <div class="flex-row-spaced title">
+                                <div>Progress</div>
+                                <button type="button" class="terminatebtn" onclick="terminateCompar()">Terminate</button>
+                            </div>
+                            <div style="padding: 12px" class="out">
+                                <div style="height: 100%" id="run_progress">
+                                    <div class="progress_bar" id="progress_bar">
+                                      <div class="progress_run" id="progress_run"></div>
+                                      <div class="progress_info">
+                                          <div class="flex-row">
+                                                <div id="percentage">0%</div>
+                                                <div style="margin-left: 4px">Complete</div>
+                                          </div>
+                                      </div>
+                                    </div>
+                                </div>
+                                <div class="speed_up" id="speed_up"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
