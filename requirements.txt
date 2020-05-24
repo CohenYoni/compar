@@ -7,3 +7,4 @@ pymongo
 pytest
 jsonschema
 werkzeug
+mongomock
