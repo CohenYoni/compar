@@ -51,6 +51,7 @@
 !/tests/test_timer.py
 !/tests/test_dummy.py
 !/tests/test_exceptions.py
+!/tests/test_autopar.py
 !/tests/test_parameters.py
 !/tests/test_logger.py
 !/tests/test_combinator.py
