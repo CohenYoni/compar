@@ -58,6 +58,15 @@
                         <div style="color: red;" id="outputDirectoryAlert"></div>
                         <div class="horizontal-separator"></div>
                         <div class="flex-row-spaced">
+                            <div class="form-title">Project Name:</div>
+                            <div class="tooltip informationButton">i
+                                <span class="tooltiptext">The name of the project (e.g. MG_2)</span>
+                            </div>
+                        </div>
+                        {{ form.project_name }}
+                        <div style="color: red;" id="projectNameAlert"></div>
+                        <div class="horizontal-separator"></div>
+                        <div class="flex-row-spaced">
                             <div class="form-title">Main c file:</div>
                             <div class="tooltip informationButton">i
                                 <span class="tooltiptext">Relative path to the main c file (e.g. source/main.c)</span>
@@ -275,6 +284,7 @@
                                 <div style="color: red" id="validationPathAlert"></div>
                             </div>
                         <button type="submit" value="Submit" id="startComparButton" class="startbtn">START</button>
+                        <button type="button" class="terminatebtn2" onclick="terminateCompar()" id="terminate_button">Terminate</button>
                     </div>
                 </div>
                 <div class="screen-container">
@@ -285,7 +295,7 @@
                     <div style="height: 70%; margin-top: 8px; overflow: hidden" class="flex-col">
                             <div class="output-log flex-col">
                                 <div style="padding: 6.5px" class="flex-row-spaced title">
-                                    <div>Log</div>
+                                    <div>Progress</div>
                                     <div class="menu" onclick="showMenuBar()">
                                         <div style="width: auto" class="burger">
                                             <div class="menu-icon"></div>
@@ -299,28 +309,21 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="out">
-                                    <div id="output"></div>
-                                </div>
-                            </div>
-                            <div style="margin-top: 8px; height: 20%;" class="output-log flex-col">
-                                <div class="flex-row-spaced title">
-                                    <div>Progress</div>
-                                    <button type="button" class="terminatebtn" onclick="terminateCompar()">Terminate</button>
-                                </div>
-                                <div style="padding: 12px" class="out">
-                                    <div style="height: 100%" id="run_progress">
+                                 <div style="padding: 8px;">
+                                    <div id="run_progress">
                                         <div class="progress_bar" id="progress_bar">
                                           <div class="progress_run" id="progress_run"></div>
                                           <div class="progress_info">
                                               <div class="flex-row">
-                                                    <div id="percentage">0%</div>
-                                                    <div style="margin-left: 4px">Complete</div>
+                                                    <div id="percentage"></div>
                                               </div>
                                           </div>
                                         </div>
                                     </div>
                                     <div class="speed_up" id="speed_up"></div>
+                                </div>
+                                <div class="out">
+                                    <div id="output"></div>
                                 </div>
                             </div>
                         </div>

@@ -78,12 +78,13 @@ class SingleFileForm(FlaskForm):
     result_file_area = TextAreaField('result_file_area')
     log_level = SelectField('compiler', choices=[('', 'Basic'), ('verbose', 'Verbose'), ('debug', 'Debug')])
     test_path = StringField('test_file_path', validators=[path_validator])
-    compar_mode = SelectField('mode', choices=[('override', 'Override'), ('new', 'New'), ('continue', 'Continue')])
+    compar_mode = SelectField('mode', choices=[('overwrite', 'Overwrite'), ('new', 'New'), ('continue', 'Continue')])
 
 
 class MultipleFilesForm(FlaskForm):
     input_directory = StringField('input_directory', validators=[path_validator, InputRequired()])
-    output_directory = StringField('output_directory', validators=[InputRequired()])
+    output_directory = StringField('output_directory', validators=[InputRequired(), path_validator])
+    project_name = StringField('project_name', validators=[InputRequired()])
     main_file_path = StringField('main_file_path', validators=[relative_path_validator, InputRequired()])
     compiler_flags = StringField('compiler_flags')
     compiler_version = StringField('compiler_version')
@@ -105,12 +106,13 @@ class MultipleFilesForm(FlaskForm):
     compiler = SelectField('compiler', choices=[('gcc', 'GCC'), ('icc', 'ICC')])
     log_level = SelectField('compiler', choices=[('', 'Basic'), ('verbose', 'Verbose'), ('debug', 'Debug')])
     test_path = StringField('test_file_path', validators=[path_validator])
-    compar_mode = SelectField('mode', choices=[('override', 'Override'), ('new', 'New'), ('continue', 'Continue')])
+    compar_mode = SelectField('mode', choices=[('overwrite', 'Overwrite'), ('new', 'New'), ('continue', 'Continue')])
 
 
 class MakefileForm(FlaskForm):
     input_directory = StringField('input_directory', validators=[path_validator, InputRequired()])
-    output_directory = StringField('output_directory', validators=[InputRequired()])
+    output_directory = StringField('output_directory', validators=[InputRequired(), path_validator])
+    project_name = StringField('project_name', validators=[InputRequired()])
     main_file_path = StringField('main_file_path', validators=[relative_path_validator, InputRequired()])
     makefile_commands = StringField('makefile_commands', validators=[InputRequired()])
     executable_path = StringField('executable_path', validators=[relative_path_validator])
@@ -135,7 +137,7 @@ class MakefileForm(FlaskForm):
     main_file_parameters = StringField('main_file_parameters')
     log_level = SelectField('compiler', choices=[('', 'Basic'), ('verbose', 'Verbose'), ('debug', 'Debug')])
     test_path = StringField('test_file_path', validators=[path_validator])
-    compar_mode = SelectField('mode', choices=[('override', 'Override'), ('new', 'New'), ('continue', 'Continue')])
+    compar_mode = SelectField('mode', choices=[('overwrite', 'Overwrite'), ('new', 'New'), ('continue', 'Continue')])
 
 
 @app.route("/")
@@ -175,8 +177,9 @@ def single_file_submit():
             source_file_path = os.path.join(input_dir_path, source_file_name)
             save_source_file(file_path=source_file_path, txt=form.source_file_code.data)
             # create working dir
+            session['project_name'] = file_hash
+            session['output_dir'] = os.path.join(current_dir_path, TEMP_FILES_DIRECTORY)
             working_dir_path = os.path.join(TEMP_FILES_DIRECTORY, file_hash)
-            os.makedirs(working_dir_path, exist_ok=True)
             session['working_dir'] = os.path.join(current_dir_path, working_dir_path)
             # update main file rel path as filename
             session['main_file_rel_path'] = source_file_name
@@ -210,8 +213,9 @@ def multiple_files_submit():
     print(form.errors)
     if form.validate_on_submit():
         session['input_dir'] = form.input_directory.data
-        session['working_dir'] = form.output_directory.data
-        os.makedirs(session['working_dir'], exist_ok=True)
+        session['output_dir'] = form.output_directory.data
+        session['project_name'] = form.project_name.data
+        session['working_dir'] = os.path.join(form.output_directory.data, form.project_name.data)
         session['main_file_rel_path'] = form.main_file_path.data
         # other fields
         session['compiler'] = form.compiler.data
@@ -241,8 +245,9 @@ def makefile_submit():
     print(form.errors)
     if form.validate_on_submit():
         session['input_dir'] = form.input_directory.data
-        session['working_dir'] = form.output_directory.data
-        os.makedirs(session['working_dir'], exist_ok=True)
+        session['output_dir'] = form.output_directory.data
+        session['project_name'] = form.project_name.data
+        session['working_dir'] = os.path.join(form.output_directory.data, form.project_name.data)
         session['main_file_rel_path'] = form.main_file_path.data
         # other fields
         session['makefile_commands'] = form.makefile_commands.data
@@ -268,7 +273,7 @@ def makefile_submit():
     return jsonify(errors=form.errors)
 
 
-@app.route('/stream_progress', methods=['POST'])
+@app.route('/stream_progress', methods=['post'])
 def stream():
     compar_command = ''
     compar_mode = ''
@@ -441,9 +446,11 @@ def terminate_compar():
 def generate_compar_command_without_makefile():
     command = []
     # input dir
-    command += [f"-dir {session['input_dir']}"]
-    # working dir
-    command += [f"-wd {session['working_dir']}"]
+    command += [f"-input_dir {session['input_dir']}"]
+    # output dir
+    command += [f"-output_dir {session['output_dir']}"]
+    # project name
+    command += [f"-name {session['project_name']}"]
     # main file rel path
     command += [f"-main_file_r_p {session['main_file_rel_path']}"]
     # compiler type
@@ -501,9 +508,11 @@ def generate_compar_command_without_makefile():
 def generate_compar_command_with_makefile():
     command = []
     # input dir
-    command += [f"-dir {session['input_dir']}"]
-    # working dir
-    command += [f"-wd {session['working_dir']}"]
+    command += [f"-input_dir {session['input_dir']}"]
+    # output dir
+    command += [f"-output_dir {session['output_dir']}"]
+    # project name
+    command += [f"-name {session['project_name']}"]
     # main file rel path
     command += [f"-main_file_r_p {session['main_file_rel_path']}"]
     # makefile commands
@@ -594,9 +603,10 @@ def assert_GUI_API():
     if not re.search('Job [0-9]+ status is COMPLETE', LogPhrases.JOB_IS_COMPLETE.format(1)):
         raise Exception("Log phrase for completed slurm job in compar must has this pattern :"
                         " 'Job <job_number> status is COMPLETE'")
-    if not re.search('final results speedup is [+-]?([0-9]*[.])?[0-9]+', LogPhrases.FINAL_RESULTS_SPEEDUP.format(1)):
-        raise Exception("Log phrase for final resutls speedup must has this pattern :"
-                        " 'final results speedup is <speedup>'")
+    if not re.search('final results speedup is ([0-9]*[.])?[0-9]+ and runtime is ([0-9]*[.])?[0-9]+',
+                     LogPhrases.FINAL_RESULTS_SUMMARY.format(1, 2)):
+        raise Exception("Log phrase for final results summary must has this pattern :"
+                        " 'final results speedup is <speedup> and runtime is <runtime>'")
     if not re.search('Working on [^ \t\n]+ combination', LogPhrases.NEW_COMBINATION.format("A1B2C3")):
         raise Exception("Log phrase for working on ne combination in compar must has this pattern :"
                         " 'Working on <combination_id> combination'")
