@@ -48,5 +48,3 @@
 !globals.py
 !combination_validator.py
 !/tests/*
-!/tests/test_job_executor.py
-!/tests/test_subprocess_handler.py
