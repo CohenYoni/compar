@@ -3,12 +3,13 @@ from execute_job import ExecuteJob
 from job import Job
 from combination import Combination
 from threading import RLock
-from globals import ComparMode, ComparConfig, CombinatorConfig
+from globals import ComparConfig
 import os
 from parameters import Parameters
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from unittest.mock import Mock
 import shutil
+
 
 class TestExecuteJob(unittest.TestCase):
 
@@ -31,8 +32,7 @@ class TestExecuteJob(unittest.TestCase):
         self.loop1_serial_run_time = "12.2"
 
         self.num_of_loops_in_files = {}
-        self.db = Mock()#"DB object"#need Mock
-
+        self.db = Mock()
         self.db_lock = RLock()
 
         self.serial_run_time = {(self.file_relative_path, self.loop1_label): self.loop1_serial_run_time}  #{(<file_id_by_rel_path>, <loop_label>) : <run_time>, ... }
@@ -91,12 +91,6 @@ class TestExecuteJob(unittest.TestCase):
 
 
     def test_run(self):
-        vals = {'sbatch  -o unit_test_execute_job/unit_test_execute_job.log unit_test_execute_job/batch_job.sh unit_test_execute_job/unit_test_execute_job.x': ('stdout', 'stderr', 'ret_code'),
-                'squeue': 0}
-
-        def side_effect(*args):
-            return vals[args]
-
         user_slurm_parameters = []
         batch_dir_file_path = "unit_test_execute_job"
         if not os.path.exists(batch_dir_file_path):
@@ -104,7 +98,6 @@ class TestExecuteJob(unittest.TestCase):
 
         with patch('execute_job.run_subprocess') as run_process_mock:
             run_process_mock.side_effect = [('stdout', 'stderr', 'ret_code')]
-            #run_process_mock.return_value = MagicMock(side_effect=side_effect)
             with patch('execute_job.time.sleep') as sleep_mock:
                 sleep_mock.return_value = True
                 self.ej.run(user_slurm_parameters)
@@ -117,7 +110,6 @@ class TestExecuteJob(unittest.TestCase):
 
 
 
-#'sbatch  -o unit_test_execute_job/unit_test_execute_job.log unit_test_execute_job/batch_job.sh unit_test_execute_job/unit_test_execute_job.x'
 if __name__ == '__main__':
     unittest.main()
 
