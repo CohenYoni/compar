@@ -148,8 +148,9 @@ class Compar:
             writer.writerow(['Total run time:', str(total_rum_time)])
 
     def __init__(self,
-                 working_directory: str,
                  input_dir: str,
+                 output_dir: str,
+                 project_name: str,
                  main_file_rel_path: str,
                  binary_compiler_type: str = "",
                  binary_compiler_version: str = None,
@@ -170,8 +171,26 @@ class Compar:
                  mode=ComparConfig.MODES[ComparConfig.DEFAULT_MODE],
                  code_with_markers: bool = False,
                  clear_db: bool = False,
-                 multiple_combinations: int = 1):
+                 multiple_combinations: int = 1,
+                 log_level: int = logger.DEFAULT_LOG_LEVEL):
 
+        self.db = Database(project_name, mode)
+
+        working_directory = os.path.join(output_dir, self.db.get_project_name())
+        if mode == ComparMode.CONTINUE:
+            e.assert_original_files_folder_exists(working_directory)
+        else:
+            if os.path.exists(working_directory):
+                shutil.rmtree(working_directory)
+        os.makedirs(working_directory, exist_ok=True)
+
+        logger.initialize(log_level, working_directory)
+        logger.info('Starting ComPar execution')
+
+        e.assert_rel_path_starts_without_sep(makefile_exe_folder_rel_path)
+        e.assert_rel_path_starts_without_sep(main_file_rel_path)
+        if slurm_parameters and len(slurm_parameters) == 1:
+            slurm_parameters = str(slurm_parameters[0]).split(' ')
         e.assert_folder_exist(input_dir)
         e.assert_user_json_structure()
 
@@ -258,13 +277,16 @@ class Compar:
         # Initialization
         if not is_make_file:
             self.__initialize_binary_compiler()
-        self.db = Database(self.working_directory, mode=self.mode)
+
+        self.db.create_collections()
 
     def clear_related_collections(self):
         if self.db:
             self.db.delete_all_related_collections()
 
     def inject_rtl_params_to_loop(self, file_dict: dict, omp_rtl_params: list):
+        if not omp_rtl_params:
+            return
         c_file_path = file_dict['file_full_path']
         e.assert_file_exist(c_file_path)
         with open(c_file_path, 'r') as input_file:
@@ -459,8 +481,8 @@ class Compar:
                              self.make_absolute_file_list(final_folder_path)])
         self.db.remove_unused_data(Database.COMPAR_COMBINATION_ID)
         self.db.remove_unused_data(Database.FINAL_RESULTS_COMBINATION_ID)
-        final_result_speedup = self.db.get_final_result_speedup()
-        logger.info(LogPhrases.FINAL_RESULTS_SPEEDUP.format(final_result_speedup))
+        final_result_speedup, final_result_runtime = self.db.get_final_result_speedup_and_runtime()
+        logger.info(LogPhrases.FINAL_RESULTS_SUMMARY.format(final_result_speedup, final_result_runtime))
         if self.clear_db:
             self.clear_related_collections()
         self.db.close_connection()
@@ -736,6 +758,8 @@ class Compar:
         if not base_dir:
             base_dir = self.combinations_dir
         combination_folder_path = os.path.join(base_dir, combination_folder_name)
+        if os.path.exists(combination_folder_path):
+            shutil.rmtree(combination_folder_path)
         os.mkdir(combination_folder_path)
         self.__copy_folder_content(self.original_files_dir, combination_folder_path)
         if not os.path.isdir(combination_folder_path):
