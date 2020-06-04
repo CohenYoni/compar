@@ -24,13 +24,13 @@ class TestClassDatabase(TestCase):
         compilation_param = '-alias=3'
 
         self.param_dic = {'omp_directives_params': [omp_directives_param],
-                     'omp_rtl_params': [omp_rtl_param],
-                     'compilation_params': [compilation_param]}
+                          'omp_rtl_params': [omp_rtl_param],
+                          'compilation_params': [compilation_param]}
 
         self.comb_dic = {'_id': '1',
-                    'compiler_name': 'test',
-                    'parameters': self.param_dic
-                        }
+                         'compiler_name': 'test',
+                         'parameters': self.param_dic
+                         }
 
     def tearDown(self):
         self.test_db.close_connection()
@@ -86,7 +86,8 @@ class TestClassDatabase(TestCase):
 
     def test_get_combination_from_static_db(self):
         expected = {'_id': 'serial', 'compiler_name': 'serial', 'parameters': {'omp_rtl_params': [],
-                                              'omp_directives_params': [], 'compilation_params': []}}
+                                                                               'omp_directives_params': [],
+                                                                               'compilation_params': []}}
         result = self.test_db.get_combination_from_static_db(self.test_db.SERIAL_COMBINATION_ID)
         self.assertEqual(result, expected)
 
