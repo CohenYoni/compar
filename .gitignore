@@ -53,6 +53,7 @@
 !/tests/test_exceptions.py
 !/tests/test_autopar.py
 !/tests/test_binary_compiler.py
+!/tests/test_fragmentator.py
 !/tests/test_parameters.py
 !/tests/test_logger.py
 !/tests/test_combinator.py
