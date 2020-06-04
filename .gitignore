@@ -62,3 +62,4 @@
 !/tests/test_makefile.py
 !/tests/test_parallelCompiler.py
 !/tests/test_database.py
+!/tests/*
