@@ -2,6 +2,7 @@ import unittest
 import os
 from fragmentator import Fragmentator
 import exceptions as e
+from globals import FragmentatorConfig
 
 
 class TestClassFragmentator(unittest.TestCase):
@@ -21,6 +22,10 @@ class TestClassFragmentator(unittest.TestCase):
 
     def test_fragmentator_instance_is_not_none(self):
         self.assertIsNotNone(self.fragmentator_mock)
+
+    def test_get_label(self):
+        self.assertEqual(Fragmentator.get_start_label(), FragmentatorConfig.START_LOOP_LABEL_MARKER)
+        self.assertEqual(Fragmentator.get_end_label(), FragmentatorConfig.END_LOOP_LABEL_MARKER)
 
     def test_get_file_path(self):
         self.assertEqual(self.fragmentator_mock.get_file_path(), self.file_name)
