@@ -40,6 +40,9 @@ class TestClassFragmentator(unittest.TestCase):
 
         self.fragmentator_mock.set_file_path(self.file_name)
 
+        if os.path.exists(exist_path):
+            os.remove(exist_path)
+
     def test_count_loops_in_prepared_file_without_markers(self):
         num_of_loops = Fragmentator.count_loops_in_prepared_file(self.file_name)
         self.assertEqual(num_of_loops, 0)
